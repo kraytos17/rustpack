@@ -26,23 +26,11 @@ impl<R: Read> Decoder<R> {
             0xc2 => Ok(Value::Boolean(false)),
             0xc3 => Ok(Value::Boolean(true)),
             0x00..=0x7f | 0xe0..=0xff | 0xcc..=0xd3 => self.decode_int(prefix),
-            0xca..=0xcb => self.decode_float(prefix),
-            0xa0..=0xbf | 0xd9..=0xdb => {
-                let s = self.decode_str(prefix)?;
-                Ok(Value::String(s))
-            }
-            0xc4..=0xc6 => {
-                let b = self.decode_bin(prefix)?;
-                Ok(Value::Binary(b))
-            }
-            0x90..=0x9f | 0xdc | 0xdd => {
-                let arr = self.decode_arr(prefix)?;
-                Ok(Value::Array(arr))
-            }
-            0x80..=0x8f | 0xde | 0xdf => {
-                let map = self.decode_map(prefix)?;
-                Ok(Value::Map(map))
-            }
+            0xca | 0xcb => self.decode_float(prefix),
+            0xa0..=0xbf | 0xd9..=0xdb => self.decode_str(prefix),
+            0xc4..=0xc6 => self.decode_bin(prefix),
+            0x90..=0x9f | 0xdc | 0xdd => self.decode_arr(prefix),
+            0x80..=0x8f | 0xde | 0xdf => self.decode_map(prefix),
             0xc7..=0xc9 | 0xd4..=0xd8 => self.decode_ext(prefix),
             _ => Err(MsgPackErr::InvalidFormat(prefix)),
         }

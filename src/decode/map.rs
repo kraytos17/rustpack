@@ -2,7 +2,7 @@ use crate::{decode::Decoder, error::MsgPackErr, value::Value};
 use std::io::Read;
 
 impl<R: Read> Decoder<R> {
-    pub(crate) fn decode_map(&mut self, prefix: u8) -> Result<Vec<(Value, Value)>, MsgPackErr> {
+    pub(crate) fn decode_map(&mut self, prefix: u8) -> Result<Value, MsgPackErr> {
         let len = match prefix {
             0x80..=0x8f => (prefix & 0x0f) as usize,
             0xde => self.read_u16()? as usize,
@@ -17,6 +17,6 @@ impl<R: Read> Decoder<R> {
             map.push((key, val));
         }
 
-        Ok(map)
+        Ok(Value::Map(map))
     }
 }
