@@ -56,29 +56,4 @@ impl<W: Write> Encoder<W> {
         }
         Ok(())
     }
-
-    pub(crate) fn make_timestamp_ext(seconds: i64, nanos: u32) -> Extension {
-        if nanos == 0 && (seconds >> 34) == 0 {
-            let mut buf = Vec::with_capacity(4);
-            buf.extend_from_slice(&u32::try_from(seconds).unwrap().to_be_bytes());
-            Extension {
-                type_id: -1,
-                data: buf,
-            }
-        } else if (seconds >> 34) == 0 {
-            let val = (u64::from(nanos) << 34) | u64::try_from(seconds).unwrap();
-            Extension {
-                type_id: -1,
-                data: val.to_be_bytes().to_vec(),
-            }
-        } else {
-            let mut buf = Vec::with_capacity(12);
-            buf.extend_from_slice(&nanos.to_be_bytes());
-            buf.extend_from_slice(&seconds.to_be_bytes());
-            Extension {
-                type_id: -1,
-                data: buf,
-            }
-        }
-    }
 }
