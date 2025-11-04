@@ -7,7 +7,7 @@ impl<R: Read> Decoder<R> {
             0xca => {
                 let bits = self.read_u32()?;
                 let f = f32::from_bits(bits);
-                Ok(Value::Float(f as f64))
+                Ok(Value::Float(f64::from(f)))
             }
             0xcb => {
                 let bits = self.read_u64()?;

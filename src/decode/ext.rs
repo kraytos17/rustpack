@@ -36,7 +36,7 @@ impl<R: Read> Decoder<R> {
     fn decode_timestamp(data: &[u8]) -> Result<Extension, MsgPackErr> {
         match data.len() {
             4 => {
-                let secs = u32::from_be_bytes(data.try_into().unwrap()) as u64;
+                let secs = u64::from(u32::from_be_bytes(data.try_into().unwrap()));
                 Ok(Extension {
                     type_id: -1,
                     data: secs.to_be_bytes().to_vec(),
@@ -45,7 +45,7 @@ impl<R: Read> Decoder<R> {
             8 => {
                 let raw = u64::from_be_bytes(data.try_into().unwrap());
                 let nanos = (raw >> 34) as u32;
-                let secs = raw & 0x3FFFFFFFF;
+                let secs = raw & 0x0003_FFFF_FFFF;
                 let mut bytes = Vec::new();
                 bytes.extend_from_slice(&secs.to_be_bytes());
                 bytes.extend_from_slice(&nanos.to_be_bytes());
