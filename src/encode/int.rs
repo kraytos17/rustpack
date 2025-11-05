@@ -28,8 +28,8 @@ impl<W: Write> Encoder<W> {
             self.w.write_all(&[0xce])?;
             self.w.write_all(&(value as u32).to_be_bytes())?;
         } else {
-            self.w.write_all(&[0xcf])?;
-            self.w.write_all(&(value as u64).to_be_bytes())?;
+            self.w.write_all(&[0xd3])?;
+            self.w.write_all(&(value as i64).to_be_bytes())?;
         }
 
         Ok(())
